@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(GREP LANGUAGES C)
 add_library(bitset STATIC lib/bitset.c)
+include_directories("${CMAKE_SOURCE_DIR}")
 if(EXISTS "${CMAKE_SOURCE_DIR}/test")
     enable_testing()
     add_executable(bitset_test test/bitset_test.c)

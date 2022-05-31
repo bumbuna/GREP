@@ -1,6 +1,6 @@
 //Bumbuna <developer@devbumbuna.com>
 //2022
-#include "../include/bitset.h"
+#include "include/bitset.h"
 #include <string.h>
 
 //unsigned int -> int
