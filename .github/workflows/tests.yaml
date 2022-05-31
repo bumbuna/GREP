@@ -1,0 +1,19 @@
+name: grep-test
+on: [push]
+jobs:
+  run-ctests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: get cmake
+      uses: jwlawson/actions-setup-cmake@v1.12
+      with:
+        cmake-version: latest
+    - name: configure
+      run: cmake -B build
+    - name: build
+      run: cmake --build build
+    - name: ctest
+      run: cd build && ctest
+
+
