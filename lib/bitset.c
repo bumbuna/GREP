@@ -194,3 +194,38 @@ extern int set_compare(struct set *s, struct set *t) {
     }
     return 0;
 } 
+
+//struct set *s, void(*)(int) -> void
+//apply function f on each member of set s
+extern void set_apply(struct set *s, void (*f)(int)) {
+    int member = 0;
+    while((member = set_nextmember(s)) != -1) {
+        (*f)(member);
+    }
+}
+//struct set *s -> int
+//get next member of set s, -1 if set is depleted
+extern int set_nextmember(struct set *s) {
+    static struct set *active_set;
+    static int active_set_i;
+    if(!s) {
+        active_set = s;
+        return -1;
+    }
+    if(s != active_set) {
+        active_set = s;
+        active_set_i = 0;
+        int i = 0;
+        while(!active_set->b_array[i] && i < active_set->b_array_sz) {
+            i++;
+        }
+        active_set_i =i*WORD_BITS;
+    }
+    while (active_set_i < active_set->b_array_bits) {
+        if(set_member(active_set, active_set_i)) {
+            return active_set_i++;
+        }
+        active_set++;
+    }
+    return -1;
+}

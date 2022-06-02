@@ -93,6 +93,20 @@ void test_duplicate() {
     assert(!set_compare(s, t)); 
 }
 
+void test_nextmember() {
+    struct set *s = set_create();
+    assert(s);
+    for(int i = 0; i < 9; i++) {
+        set_add(s, i);
+    }
+    int m;
+    int printed = 0;
+    while((m = set_nextmember(s)) != -1) {
+        printed += printf("%d", m);
+    }
+    assert(printed == 9);
+}
+
 int main(int argc, char **argv) {
     struct set *s = set_create();
     int iterations = 23;
@@ -122,5 +136,6 @@ int main(int argc, char **argv) {
     test_difference();
     test_assign();
     test_duplicate();
+    test_nextmember();
     set_free(s);
 }

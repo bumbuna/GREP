@@ -71,4 +71,10 @@ extern void set_assign(struct set *s, struct set *t);
 //compare sets s and t
 //for s>t return +ve, s<t return -ve, s==t return 0
 extern int set_compare(struct set *s, struct set *t);
+//struct set *s, void(*)(int) -> void
+//apply function f on each member of set s
+extern void set_apply(struct set *s, void (*f)(int));
+//struct set *s -> int
+//get next member of set s, -1 if set is depleted
+extern int set_nextmember(struct set *s);
 #endif //BITSET_H
