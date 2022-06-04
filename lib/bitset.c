@@ -142,7 +142,7 @@ extern void set_intersect(struct set *s, struct set *t) {
     for(int i = 0; i < t->b_array_sz; i++) {
         s->b_array[i] &= t->b_array[i];
     }
-        memset(s->b_array[t->b_array_sz], 0, 
+        memset(&s->b_array[t->b_array_sz], 0, 
                 WORD*(s->b_array_sz-t->b_array_sz));
 }
 
@@ -225,7 +225,7 @@ extern int set_nextmember(struct set *s) {
         if(set_member(active_set, active_set_i)) {
             return active_set_i++;
         }
-        active_set++;
+        active_set_i++;
     }
     return -1;
 }

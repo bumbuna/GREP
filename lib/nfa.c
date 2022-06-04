@@ -6,24 +6,11 @@
 #include <string.h>
 #include <stdarg.h>
 
-//default lexical analyzer
-extern int getchar_wrapper(char *store) {
-    while((*store = getchar()) != EOF) {
-        int escaped = 0;
-        if(*store == '\\') {
-            escaped = 1;
-            *store = getchar();
-        }
-        return escaped ? LITERAL : ascii2TOKEN[*store];
-    }
-    return END_OF_REGEX;
-}
-
-static char(*regex_characters)() = getchar_wrapper;
+static int(*regex_characters)() = getchar;
 static int current_token;
 static char current_char;
 #define match(x) (current_token == x)
-#define advance() (current_token = (*regex_characters)(&current_char))
+#define advance() (current_token = tokenizer(&current_char))
 #define match_closure() (match(TIMES)||match(PLUS)||match(QUESTION))
 #define MAX_NFA_STATES 256
 static struct nfa *nfa_block;
@@ -48,6 +35,18 @@ static struct nfa *nfa_new(void);
 static void nfa_recycle(struct nfa *n);
 static int can_concat(void);
 
+//default lexical analyzer
+extern int tokenizer(char *store) {
+    while((*store = (*regex_characters)()) != EOF) {
+        int escaped = 0;
+        if(*store == '\\') {
+            escaped = 1;
+            *store = (*regex_characters)();
+        }
+        return escaped ? LITERAL : ascii2TOKEN[*store];
+    }
+    return END_OF_REGEX;
+}
 //int,... -> void
 //interface to the nfa module routines
 //cmd is the action to perform
@@ -59,7 +58,7 @@ extern void *nfa_terminal(int cmd, ...) {
         case CMD_MAKE: {
             regex_characters = va_arg(l, void *);
             if(!regex_characters) {
-                regex_characters = getchar_wrapper;
+                regex_characters = getchar;
             }
             struct nfa **start = va_arg(l, struct nfa **);
             advance();
@@ -143,6 +142,7 @@ static void cat(struct nfa **start, struct nfa **end) {
         struct nfa *start2, *end2;
         closured(&start2, &end2);
         memmove(*end, start2, sizeof(struct nfa));
+        *end = end2;
         nfa_recycle(start2);
     }
 }
